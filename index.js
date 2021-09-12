@@ -8,7 +8,7 @@ const mongoose = require("mongoose");
 // const app = initializeApp(firebaseConfig);
 // const analytics = getAnalytics(app);
 
-//changed
+
 // Initialize Mongoose
 mongoose.connect("mongodb+srv://workoutneed_admin:5VmbAUUgRvX2giBM@clusterworkoutneed.sodjb.mongodb.net/ClusterWorkOutNeed?retryWrites=true&w=majority").then(
     result => {
