@@ -7,6 +7,7 @@
 
 const express = require('express');
 const path = require('path');
+const mongoose = require('mongoose');
 const app = express();
 // // Initialize Mongoose
 mongoose.connect("mongodb+srv://workoutneed_admin:5VmbAUUgRvX2giBM@clusterworkoutneed.sodjb.mongodb.net/ClusterWorkOutNeed?retryWrites=true&w=majority").then(
