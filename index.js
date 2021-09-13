@@ -17,7 +17,7 @@ mongoose.connect("mongodb+srv://workoutneed_admin:5VmbAUUgRvX2giBM@clusterworkou
 app.get('/', (req, res) => {
   res.status(200).json({status:true, message:"Server Running"});
 })
-const port = 8080;
+const port = 3000;
 app.listen(port, () => {
   console.log(`Workoutneed app listening at http://localhost:${port}`)
 })
