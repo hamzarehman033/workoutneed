@@ -1,4 +1,4 @@
- export default firebaseConfig = {
+exports.firebaseConfig = {
     apiKey: "AIzaSyCNO-NL_zcdVVWcA8RNS9_UmeGYAAs7HMk",
     authDomain: "workoutneed-a5267.firebaseapp.com",
     projectId: "workoutneed-a5267",
