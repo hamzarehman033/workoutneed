@@ -64,10 +64,27 @@ exports.userLogin = ((req, res)=>{
         )
     }
     else{
-        res.status(400).json({message:"Invlid Credentials", payload: null});
+        res.status(400).json({message:"Invalid request params", payload: null});
     }
 })
 
+exports.resetPassword = ((req, res)=>{
+    const email = req.body.email;
+    if(email){
+        firebaseAuth.sendPasswordResetEmail(firebaseAuth.getAuth(), email).then(
+            user =>{
+                res.status(400).json({message:"Password reset link sent", payload: null});
+            }
+        ).catch(
+            err =>{
+                res.status(400).json({message:"failed to send reset email", error: err});
+            }
+        )
+    }
+    else{
+        res.status(400).json({message:"Invalid request params", payload: null});
+    }
+})
 
 
 // exports.login = ((req, rsp)=>{

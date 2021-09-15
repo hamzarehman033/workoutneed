@@ -14,6 +14,7 @@ mongoose.connect("mongodb+srv://workoutneed_admin:5VmbAUUgRvX2giBM@clusterworkou
 
 app.post("/api/auth/signup", firebaseAuthController.createUser);
 app.post("/api/auth/signin", firebaseAuthController.userLogin);
+app.post("/api/auth/passwordreset", firebaseAuthController.resetPassword);
 
 app.get('/*', function(req,res) {
   res.status(200).json({status: true, message:"Workoutneed server running"});
