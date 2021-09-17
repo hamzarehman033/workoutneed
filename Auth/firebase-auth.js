@@ -18,14 +18,14 @@ firebase.initializeApp(config);
 exports.createUser = async ((req, res)=>{
     const email = req.body.email;
     const password = req.body.password;
-
     if(email && password){
         firebaseAuth.createUserWithEmailAndPassword(firebaseAuth.getAuth(),email,password).then(
            async user =>{
                 console.log("usersignup");
                 console.log(user);
                 firebaseAuth.sendEmailVerification(user.user);
-                const newUser =  new UserDb({uid: user.user.uid, email: user.user.email});
+                randomNum = Math.floor(Math.random() * 100);
+                const newUser =  new UserDb({uid: user.user.uid, email: user.user.email, username: user.user.email.split('@')[0] + randomNum});
                 const saveUser = await newUser.save();
                 if(saveUser){
                     console.log("user created");
@@ -55,7 +55,7 @@ exports.userLogin = ((req, res)=>{
     if(email && password){
         firebaseAuth.signInWithEmailAndPassword(firebaseAuth.getAuth(),email,password).then(
             user =>{
-                res.status(400).json({message:"User Login", payload: user});
+                res.status(200).json({message:"User Login", payload: user});
             }
         ).catch(
             err =>{
@@ -73,7 +73,7 @@ exports.resetPassword = ((req, res)=>{
     if(email){
         firebaseAuth.sendPasswordResetEmail(firebaseAuth.getAuth(), email).then(
             user =>{
-                res.status(400).json({message:"Password reset link sent", payload: null});
+                res.status(200).json({message:"Password reset link sent", payload: null});
             }
         ).catch(
             err =>{
@@ -87,6 +87,112 @@ exports.resetPassword = ((req, res)=>{
 })
 
 
+exports.getProfile = ((req, res)=>{
+    const uid = req.body.id;
+    if(uid){
+        UserDb.findOne({uid: uid}).then(
+            user => {
+                if (user){
+                    res.status(200).json({message:"User profile", payload: user});
+                }
+                else {
+                    res.status(400).json({message:"no data found against provided id", payload: null});
+                }
+            }
+        ).catch(
+            err =>{
+                res.status(400).json({message:"failed to fetch user profile", error: err});
+            }
+        )
+    }
+    else{
+        res.status(400).json({message:"Invalid request params", payload: null});
+    }
+})
+
+exports.updateProfile = ((req, res)=>{
+    const data = req.body;
+    console.log(data);
+    const uid = data.id;
+    delete data.id;
+    if(data.email || data.uid || data.username){
+        delete data.email;
+        delete data.uid;
+        delete data.username;
+    }
+    if(uid){
+        UserDb.findOneAndUpdate({uid: uid}, data).then(
+            user => {
+                if (user){
+                    res.status(200).json({message:"User profile updated", payload: user});
+                }
+                else {
+                    res.status(400).json({message:"no data found against provided id", payload: null});
+                }
+            }
+        ).catch(
+            err =>{
+                res.status(400).json({message:"failed to update user profile", error: err});
+            }
+        )
+    }
+    else{
+        res.status(400).json({message:"Invalid request params", payload: null});
+    }
+})
+
+
+exports.addNote = ((req, res)=>{
+    const data = req.body;
+    const uid = data.id;
+    const note = {
+        title: data.title,
+        text: data.text
+    }
+    if(uid && note.title){
+        UserDb.findOneAndUpdate({uid: uid}, { $push:{notes : note } }).then(
+            user => {
+                res.status(200).json({message:"note added", payload: user});
+            }
+        ).catch(
+            err =>{
+                res.status(400).json({message:"failed to add note", error: err});
+            }
+        )
+    }
+    else{
+        res.status(400).json({message:"Invalid request params", payload: null});
+    }
+})
+
+
+exports.updateProfileImage = ((req, res)=>{
+    const data = req.body;
+    console.log(data);
+    if(req.file){
+        console.log("file");
+    }
+    res.status(200).send(req.file? "file/"+ data.email: "no file/"+ data.email);
+    // const uid = data.id;
+    // const note = {
+    //     title: data.title,
+    //     text: data.text
+    // }
+    // if(uid && note.title){
+    //     UserDb.findOneAndUpdate({uid: uid}, { $push:{notes : note } }).then(
+    //         user => {
+    //             res.status(200).json({message:"note added", payload: user});
+    //         }
+    //     ).catch(
+    //         err =>{
+    //             res.status(400).json({message:"failed to add note", error: err});
+    //         }
+    //     )
+    // }
+    // else{
+    //     res.status(400).json({message:"Invalid request params", payload: null});
+    // }
+})
 // exports.login = ((req, rsp)=>{
 //     if(true){           
 //     firebase.signInWithEmailAndPassword(firebase.getAuth(),   email,password).then((user)=>{
