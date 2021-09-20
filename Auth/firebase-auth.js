@@ -1,8 +1,12 @@
 const { async } = require("@firebase/util");
 const firebase = require("firebase/app");
 const firebaseAuth = require("firebase/auth");
+const fireStore = require("firebase/storage");
 const UserDb = require("../Model/user.model");
 // const config = require("../firebase-config");
+
+// var gcs = gcloud.storage();
+// var bucket = gcs.bucket('workoutneed-a5267.appspot.com');
 
 const config = firebaseConfig = {
     apiKey: "AIzaSyCNO-NL_zcdVVWcA8RNS9_UmeGYAAs7HMk",
@@ -168,11 +172,20 @@ exports.addNote = ((req, res)=>{
 
 exports.updateProfileImage = ((req, res)=>{
     const data = req.body;
-    console.log(data);
-    if(req.file){
-        console.log("file");
+    const file = req.file;
+    if(file){
+        const str = fireStore.getStorage(firebase.getApp(), "workoutneed-a5267.appspot.com");
+        const ref=  fireStore.ref(str , "images/"+ file.filename);
+        fireStore.uploadString(ref, req.file).then( comp =>{
+            console.log(comp);
+            res.status(200).json({message:'Image uploaded successfully', payload: null});
+        }).catch(
+            err=> {
+                console.log(err);
+                res.status(400).json({message:'Image not uploaded', error: err});
+            }
+        )
     }
-    res.status(200).send(req.file? "file/"+ data.email: "no file/"+ data.email);
     // const uid = data.id;
     // const note = {
     //     title: data.title,

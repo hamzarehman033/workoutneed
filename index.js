@@ -6,6 +6,10 @@ const path = require('path')
 const firebaseAuthController = require("./Auth/firebase-auth");
 const app = express();
 
+
+
+// var gcloud = require('gcloud');
+
 // // Initialize Mongoose
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -19,8 +23,10 @@ const storage = multer.diskStorage({
     cb(null, 'storage')
   },
   filename: function (req, file, cb) {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
-    cb(null, file.fieldname + '-' + uniqueSuffix)
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    const namesplit = file.originalname.split(".");
+    const extension = namesplit[namesplit.length -1];
+    cb(null, file.fieldname + '-' + uniqueSuffix + "." + extension);
   }
 })
 const upload = multer({ storage: storage })
@@ -32,7 +38,7 @@ app.post("/api/auth/passwordreset", firebaseAuthController.resetPassword);
 app.post("/api/auth/profile", firebaseAuthController.getProfile);
 app.post("/api/auth/updateprofile", firebaseAuthController.updateProfile);
 app.post("/api/auth/addnote", firebaseAuthController.addNote);
-// app.post("/api/profile/updateimage", upload.single("image") ,firebaseAuthController.updateProfileImage);
+app.post("/api/profile/updateimage", upload.single("image") ,firebaseAuthController.updateProfileImage);
 
 app.get('/*', function(req,res) {
   res.status(200).json({status: true, message:"Workoutneed server running"});
