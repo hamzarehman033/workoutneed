@@ -9,6 +9,7 @@ const UserSchema = mongoose.Schema({
     profile_image: {type: String},
     dob: {type: String},
     phone: {type: String},
+    channel_id: {type:  mongoose.Schema.Types.ObjectId, ref: 'Channel'},
     notes: [
         {
             title: {type: String},

@@ -4,6 +4,7 @@ var bodyParser = require('body-parser');
 var multer = require('multer');
 const path = require('path')
 const firebaseAuthController = require("./Auth/firebase-auth");
+const channelController = require("./Controller/channel.controller");
 const app = express();
 
 
@@ -39,6 +40,14 @@ app.post("/api/auth/profile", firebaseAuthController.getProfile);
 app.post("/api/auth/updateprofile", firebaseAuthController.updateProfile);
 app.post("/api/auth/addnote", firebaseAuthController.addNote);
 app.post("/api/profile/updateimage", upload.single("image") ,firebaseAuthController.updateProfileImage);
+
+app.post("/api/channel/create", channelController.createChannel);
+app.post("/api/channel/get", channelController.getChannel);
+app.post("/api/channel/update", channelController.updateChannel);
+app.post("/api/channel/delete", channelController.deleteChannel);
+app.post("/api/channel/subscribe", channelController.subscribe);
+app.post("/api/channel/unsubscribe", channelController.unsubscribe);
+app.post("/api/channel/updatelogo", upload.single("image"), channelController.updateLogo);
 
 app.get('/*', function(req,res) {
   res.status(200).json({status: true, message:"Workoutneed server running"});

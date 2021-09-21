@@ -3,6 +3,8 @@ const firebase = require("firebase/app");
 const firebaseAuth = require("firebase/auth");
 const fireStore = require("firebase/storage");
 const UserDb = require("../Model/user.model");
+const fs = require('fs');
+const path = require('path');
 // const config = require("../firebase-config");
 
 // var gcs = gcloud.storage();
@@ -170,21 +172,39 @@ exports.addNote = ((req, res)=>{
 })
 
 
-exports.updateProfileImage = ((req, res)=>{
+exports.updateProfileImage = async  ((req, res)=>{
     const data = req.body;
     const file = req.file;
     if(file){
         const str = fireStore.getStorage(firebase.getApp(), "workoutneed-a5267.appspot.com");
         const ref=  fireStore.ref(str , "images/"+ file.filename);
-        fireStore.uploadString(ref, req.file).then( comp =>{
-            console.log(comp);
-            res.status(200).json({message:'Image uploaded successfully', payload: null});
-        }).catch(
-            err=> {
-                console.log(err);
-                res.status(400).json({message:'Image not uploaded', error: err});
-            }
-        )
+        filePath = path.join(__dirname, '../storage/'+file.filename);
+        fs.readFile(filePath, async function(err,data)
+            {
+                if(data)
+                {
+                    fireStore.uploadBytes(ref, data).then( async (snapshot) => {
+                        fs.unlinkSync(filePath);
+                        const downloadURL = await fireStore.getDownloadURL(ref);
+                        console.log(downloadURL);
+                        UserDb.findOneAndUpdate({uid: data.id}, {profile_image: downloadURL.toString()}).then(
+                            (u)=>{
+                                res.status(200).json({message:'Image uploaded successfully', payload: u});
+                            }
+                        )
+                });
+                }
+            });
+        
+        // fireStore.uploadString(ref, req.file).then( comp =>{
+        //     console.log(comp);
+        //     res.status(200).json({message:'Image uploaded successfully', payload: null});
+        // }).catch(
+        //     err=> {
+        //         console.log(err);
+        //         res.status(400).json({message:'Image not uploaded', error: err});
+        //     }
+        // )
     }
     // const uid = data.id;
     // const note = {
