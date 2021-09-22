@@ -163,11 +163,11 @@ exports.updateLogo = ((req, res)=>{
         const str = fireStore.getStorage(firebase.getApp(), "workoutneed-a5267.appspot.com");
         const ref=  fireStore.ref(str , "thumbnail/"+ file.filename);
         filePath = path.join(__dirname, '../storage/'+file.filename);
-        fs.readFile(filePath, async function(err,data)
+        fs.readFile(filePath, async function(err, filedata)
             {
-                if(data)
+                if(filedata)
                 {
-                    fireStore.uploadBytes(ref, data).then( async (snapshot) => {
+                    fireStore.uploadBytes(ref, filedata).then( async (snapshot) => {
                         fs.unlinkSync(filePath);
                         const downloadURL = await fireStore.getDownloadURL(ref);
                         ChannelDb.findByIdAndUpdate(data.channel_id, { logo: downloadURL.toString() }).then(
