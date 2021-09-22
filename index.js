@@ -5,6 +5,7 @@ var multer = require('multer');
 const path = require('path')
 const firebaseAuthController = require("./Auth/firebase-auth");
 const channelController = require("./Controller/channel.controller");
+const storeController = require("./Controller/store.controller");
 const app = express();
 
 
@@ -48,6 +49,12 @@ app.post("/api/channel/delete", channelController.deleteChannel);
 app.post("/api/channel/subscribe", channelController.subscribe);
 app.post("/api/channel/unsubscribe", channelController.unsubscribe);
 app.post("/api/channel/updatelogo", upload.single("image"), channelController.updateLogo);
+
+
+app.post("/api/store/getcategories", storeController.getAllCategories);
+app.post("/api/store/addcategory",  upload.single("image"), storeController.addCategory);
+app.post("/api/store/deletecategory", storeController.deleteCategory);
+app.post("/api/store/updatecategory", upload.single("image"), storeController.updateCategory);
 
 app.get('/*', function(req,res) {
   res.status(200).json({status: true, message:"Workoutneed server running"});
