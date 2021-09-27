@@ -11,6 +11,7 @@ const UserSchema = mongoose.Schema({
     phone: {type: String},
     subscription: { type: String},
     channel_id: {type:  mongoose.Schema.Types.ObjectId, ref: 'Channel'},
+    store_id: {type:  mongoose.Schema.Types.ObjectId, ref: 'Store'},
     notes: [
         {
             title: {type: String},

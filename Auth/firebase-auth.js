@@ -226,6 +226,18 @@ exports.updateProfileImage = async  ((req, res)=>{
     //     res.status(400).json({message:"Invalid request params", payload: null});
     // }
 })
+
+exports.getUser = async  ((req, res)=>{
+    const data = req.body;
+    if(data.id){
+        const user = UserDb.findOne({uid: data.id});
+        res.status(200).json({message:"User details", payload: user});
+    }
+    else{
+        res.status(400).json({message:"user not found", error:null})
+    }
+
+})
 // exports.login = ((req, rsp)=>{
 //     if(true){           
 //     firebase.signInWithEmailAndPassword(firebase.getAuth(),   email,password).then((user)=>{

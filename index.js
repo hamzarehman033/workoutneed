@@ -56,6 +56,15 @@ app.post("/api/store/addcategory",  upload.single("image"), storeController.addC
 app.post("/api/store/deletecategory", storeController.deleteCategory);
 app.post("/api/store/updatecategory", upload.single("image"), storeController.updateCategory);
 
+app.post("/api/store/createStore", storeController.createStore);
+app.post("/api/store/getstoreid", storeController.getStoreId);
+app.post("/api/store/getallproducts", storeController.getAllProducts);
+app.post("/api/store/getstoreproducts", storeController.getStoreProducts);
+app.post("/api/store/addproduct", upload.single("image"), storeController.addProduct);
+app.post("/api/store/editproduct", storeController.updateProduct);
+app.post("/api/store/deleteproduct", storeController.deleteProduct);
+
+
 app.get('/*', function(req,res) {
   res.status(200).json({status: true, message:"Workoutneed server running"});
 });
