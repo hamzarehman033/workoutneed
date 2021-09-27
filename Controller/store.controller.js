@@ -222,19 +222,15 @@ exports.addProduct = ((req, res)=>{
             {
                 if(filedata)
                 {
-                    console.log("file");
                     fireStore.uploadBytes(ref, filedata).then( async (snapshot) => {
                         fs.unlinkSync(filePath);
-                         console.log("file uplaoded");
-
                         const downloadURL = await fireStore.getDownloadURL(ref);
-                         console.log(downloadURL);
-
                         const product = new ProductDb({
                             title: data.title,
                             description : data.description,
                             category_id: data.category_id,
                             image_url: downloadURL,
+                            price: data.price,
                             store_id: data.store_id
                         })
                         product.save().then(
@@ -258,7 +254,7 @@ exports.addProduct = ((req, res)=>{
 exports.updateProduct =( async (req, res)=>{
     const data = req.body;
     if(data.product_id){
-        ProductDb.findByIdAndUpdate(data.product_id, {title: data.title, description: data.description} ).then(
+        ProductDb.findByIdAndUpdate(data.product_id, {title: data.title, description: data.description, price: data.price} ).then(
             _product =>{
                 if(_product){
                     res.status(200).json({message:"product updated", payload: _product})
