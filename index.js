@@ -70,6 +70,7 @@ app.post("/api/store/updateorder", orderController.updateOrder);
 app.post("/api/store/getorder", orderController.getOrder);
 app.post("/api/store/getbuyerorder", orderController.getBuyerOrders);
 app.post("/api/store/getsellerorder", orderController.getSellerOrders);
+app.post("/api/store/orderpaid", orderController.markOrderPaid);
 
 app.get('/*', function(req,res) {
   res.status(200).json({status: true, message:"Workoutneed server running"});

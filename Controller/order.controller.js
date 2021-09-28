@@ -20,6 +20,7 @@ exports.addOrder =( async (req, res)=>{
             buyer_id: data.buyer_id,
             price: data.price,
             status: 'uncompleted',
+            payment_completed: false,
             date: new Date().toLocaleDateString()
         })
         order.save().then( 
@@ -101,7 +102,21 @@ exports.updateOrder =( async (req, res)=>{
    
 })
 
-
+exports.markOrderPaid =( async (req, res)=>{
+    const data = req.body;
+    if(data.order_id){
+        OrderDb.findByIdAndUpdate(data.order_id, {payment_completed: true}).then( 
+            order =>{
+                res.status(200).json({message: "order updated", payload: order})
+            }
+        ).catch( err =>{
+            res.status(400).json({message:"failed to update order", error: err})
+        })
+    } else{
+        res.status(400).json({message:"invalid parameters", error: null})
+    }
+   
+})
 
 
 

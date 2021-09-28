@@ -144,7 +144,8 @@ exports.createStore =( async (req, res)=>{
     if(data.id && data.title){
         UserDb.findOne({uid:data.id}).then(
             _user =>{
-                if(_user){
+                console.log(_user);
+                if(!_user.store_id){
                     const store = new StoreDb({
                         user_id: _user.uid,
                         title: data.title
@@ -156,6 +157,8 @@ exports.createStore =( async (req, res)=>{
                             res.status(200).json({message:"store create", payload: _store})
                         }
                     )
+                }else{
+                    res.status(400).json({message:"store already exists for this user", error: null})
                 }
             }
         )
