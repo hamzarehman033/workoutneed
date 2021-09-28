@@ -6,6 +6,7 @@ const path = require('path')
 const firebaseAuthController = require("./Auth/firebase-auth");
 const channelController = require("./Controller/channel.controller");
 const storeController = require("./Controller/store.controller");
+const orderController = require("./Controller/order.controller");
 const app = express();
 
 
@@ -64,6 +65,11 @@ app.post("/api/store/addproduct", upload.single("image"), storeController.addPro
 app.post("/api/store/editproduct", storeController.updateProduct);
 app.post("/api/store/deleteproduct", storeController.deleteProduct);
 
+app.post("/api/store/addorder", orderController.addOrder);
+app.post("/api/store/updateorder", orderController.updateOrder);
+app.post("/api/store/getorder", orderController.getOrder);
+app.post("/api/store/getbuyerorder", orderController.getBuyerOrders);
+app.post("/api/store/getsellerorder", orderController.getSellerOrders);
 
 app.get('/*', function(req,res) {
   res.status(200).json({status: true, message:"Workoutneed server running"});

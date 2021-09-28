@@ -144,11 +144,9 @@ exports.createStore =( async (req, res)=>{
     if(data.id && data.title){
         UserDb.findOne({uid:data.id}).then(
             _user =>{
-            console.log(_user);
-
                 if(_user){
                     const store = new StoreDb({
-                        user_id: _user._id,
+                        user_id: _user.uid,
                         title: data.title
                     })
                     store.save().then(
