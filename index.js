@@ -50,6 +50,8 @@ app.post("/api/channel/delete", channelController.deleteChannel);
 app.post("/api/channel/subscribe", channelController.subscribe);
 app.post("/api/channel/unsubscribe", channelController.unsubscribe);
 app.post("/api/channel/updatelogo", upload.single("image"), channelController.updateLogo);
+app.post("/api/channel/createPlaylist", channelController.createPlaylist);
+app.post("/api/channel/getPlaylists", channelController.getPlaylists);
 
 
 app.post("/api/store/getcategories", storeController.getAllCategories);
@@ -61,7 +63,9 @@ app.post("/api/store/createStore", storeController.createStore);
 app.post("/api/store/getstoreid", storeController.getStoreId);
 app.post("/api/store/getallproducts", storeController.getAllProducts);
 app.post("/api/store/getstoreproducts", storeController.getStoreProducts);
+
 app.post("/api/store/addproduct", upload.single("image"), storeController.addProduct);
+app.post("/api/store/getproduct", storeController.getProduct);
 app.post("/api/store/editproduct", storeController.updateProduct);
 app.post("/api/store/deleteproduct", storeController.deleteProduct);
 

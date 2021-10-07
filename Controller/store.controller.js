@@ -144,11 +144,11 @@ exports.createStore =( async (req, res)=>{
     if(data.id && data.title){
         UserDb.findOne({uid:data.id}).then(
             _user =>{
-                console.log(_user);
                 if(!_user.store_id){
                     const store = new StoreDb({
                         user_id: _user.uid,
-                        title: data.title
+                        title: data.title,
+                        balance: 0
                     })
                     store.save().then(
                         (_store)=>{
@@ -199,7 +199,7 @@ exports.getAllProducts =( async (req, res)=>{
 exports.getStoreProducts =( async (req, res)=>{
     const data = req.body;
     if(data.store_id){
-        ProductDb.find({store_id: data.store_id}).then(
+        StoreDb.findById(data.store_id).populate('products').then(
             _products =>{
                 if(_products){
                     res.status(200).json({message:"all store products", payload: _products})
@@ -232,13 +232,15 @@ exports.addProduct = ((req, res)=>{
                             category_id: data.category_id,
                             image_url: downloadURL,
                             price: data.price,
+                            service_charges:data.service_charges,
+                            price: data.price,
                             store_id: data.store_id
                         })
                         product.save().then(
                             _product =>{
-                                console.log(_product);
                                 StoreDb.findByIdAndUpdate(data.store_id,{ $push:{products: _product._id}})
-                                res.status(200).json({message:'Product Added', payload: _product});
+                                .then( s=> res.status(200).json({message:'Product Added', payload: _product}) )
+                                .catch(e =>  res.status(400).json({message:"failed to add product", error: error}))
                             }
                         ).catch(error => res.status(400).json({message:"failed to add product", error: error}));
                 });
@@ -251,6 +253,24 @@ exports.addProduct = ((req, res)=>{
   
 })
 
+
+exports.getProduct =( async (req, res)=>{
+    const data = req.body;
+    if(data.product_id){
+        console.log("asdfas");
+        ProductDb.findById(data.product_id).then(
+            _product =>{
+                if(_product){
+                    res.status(200).json({message:"product updated", payload: _product})
+                }
+                else{ throw "product not found"}
+            }
+        )
+        .catch( e=> res.status(400).json({message:'no product found against the id', error: null}) )
+    }
+    else{ res.status(400).json({message:'invalid params', error: null}); }
+        
+})
 
 exports.updateProduct =( async (req, res)=>{
     const data = req.body;
@@ -273,10 +293,12 @@ exports.deleteProduct =( async (req, res)=>{
         ProductDb.findByIdAndDelete(data.product_id).then(
             _product =>{
                 if(_product){
+                    StoreDb.findByIdAndUpdate(_product.store_id, {$pull: { products: _product._id}})
                     res.status(200).json({message:"product deleted", payload: _product})
                 }
+                else{ throw "product not found" }
             }
-        )
+        ).catch( () => res.status(400).json({message:'no product found against the id', error: null}) )
     }
     else{ res.status(400).json({message:'invalid params', error: null}); }
         

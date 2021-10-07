@@ -3,6 +3,7 @@ const firebaseAuth = require("firebase/auth");
 const fireStore = require("firebase/storage");
 const ChannelDb = require("../Model/channel.model");
 const UserDb = require("../Model/user.model");
+const PlaylistDb = require("../Model/playlist.model");
 const fs = require('fs');
 const path = require('path');
 
@@ -181,6 +182,41 @@ exports.updateLogo = ((req, res)=>{
         
     }
  
+})
+
+
+exports.createPlaylist =( async (req, res)=>{
+    const data = req.body;
+    if(data.title && data.channel_id){
+            const Playlist = new PlaylistDb({
+                title: data.title,
+                channel_id: data.channel_id,
+                audience:data.audience,
+                category:data.category 
+            })
+            Playlist.save().then(
+                _playlist =>{
+                    res.status(200).json({message:"playlist Created", payload: _playlist});
+                }
+            )
+    }
+    else{
+        res.status(400).json({message:"invalid parameters", error: null});
+    }
+})
+exports.getPlaylists =( async (req, res)=>{
+    const data = req.body;
+    if(data.channel_id){
+            PlaylistDb.find({channel_id: data.channel_id})
+            .then(
+                _playlists =>{
+                    res.status(200).json({message:"playlists", payload: _playlists});
+                }
+            )
+    }
+    else{
+        res.status(400).json({message:"invalid parameters", error: null});
+    }
 })
 // exports.login = ((req, rsp)=>{
 //     if(true){           

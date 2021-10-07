@@ -9,6 +9,7 @@ const ProductDb = require("../Model/product.model");
 const OrderDb = require("../Model/order.model");
 const fs = require('fs');
 const path = require('path');
+const { error } = require("console");
 
 
 exports.addOrder =( async (req, res)=>{
@@ -105,13 +106,32 @@ exports.updateOrder =( async (req, res)=>{
 exports.markOrderPaid =( async (req, res)=>{
     const data = req.body;
     if(data.order_id){
-        OrderDb.findByIdAndUpdate(data.order_id, {payment_completed: true}).then( 
-            order =>{
-                res.status(200).json({message: "order updated", payload: order})
-            }
-        ).catch( err =>{
-            res.status(400).json({message:"failed to update order", error: err})
-        })
+        const order = await OrderDb.findById(data.order_id);
+        if(order && !order.payment_completed){
+            order.payment_completed = true;
+            order.save();
+            StoreDb.findByIdAndUpdate(order.store_id, {$inc:{ balance: order.price}}).then(()=> {})
+            res.status(200).json({message: "order updated", payload: order})
+        }
+        else if( order && order.payment_completed){
+            res.status(400).json({message: "order already paid", error: null})
+        }
+        else{
+            res.status(400).json({message: "no order found against the provided id", error: null})
+        }
+        // .then( 
+        //     order =>{
+        //         if(order){
+        //             console.log(order);
+        //             StoreDb.findByIdAndUpdate(order.store_id, {$inc:{ balance: order.price}})
+                    
+        //         }else{
+        //             throw "";
+        //         }
+        //     }
+        // ).catch( err =>{
+        //     res.status(400).json({message:"failed to update order", error: err})
+        // })
     } else{
         res.status(400).json({message:"invalid parameters", error: null})
     }
