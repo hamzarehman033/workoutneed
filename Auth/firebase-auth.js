@@ -95,8 +95,25 @@ exports.resetPassword = ((req, res)=>{
 
 exports.getProfile = ((req, res)=>{
     const uid = req.body.id;
+    const username = req.body.username;
     if(uid){
         UserDb.findOne({uid: uid}).then(
+            user => {
+                if (user){
+                    res.status(200).json({message:"User profile", payload: user});
+                }
+                else {
+                    res.status(400).json({message:"no data found against provided id", payload: null});
+                }
+            }
+        ).catch(
+            err =>{
+                res.status(400).json({message:"failed to fetch user profile", error: err});
+            }
+        )
+    }
+    else if(username){
+        UserDb.findOne({username: username}).then(
             user => {
                 if (user){
                     res.status(200).json({message:"User profile", payload: user});
@@ -158,7 +175,12 @@ exports.addNote = ((req, res)=>{
     if(uid && note.title){
         UserDb.findOneAndUpdate({uid: uid}, { $push:{notes : note } }).then(
             user => {
-                res.status(200).json({message:"note added", payload: user});
+                if(user){
+                    res.status(200).json({message:"note added", payload: user});
+                }
+                else{
+                    res.status(400).json({message:"no data found against provided id", payload: null});
+                }
             }
         ).catch(
             err =>{

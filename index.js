@@ -35,11 +35,27 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage })
 
 
+
+//admin APIs
+app.post("/api/store/getcategories", storeController.getAllCategories);
+app.post("/api/store/addcategory",  upload.single("image"), storeController.addCategory);
+app.post("/api/store/deletecategory", storeController.deleteCategory);
+app.post("/api/store/updatecategory", upload.single("image"), storeController.updateCategory);
+
+
+// General APIs
 app.post("/api/auth/signup", firebaseAuthController.createUser);
 app.post("/api/auth/signin", firebaseAuthController.userLogin);
 app.post("/api/auth/passwordreset", firebaseAuthController.resetPassword);
 app.post("/api/auth/profile", firebaseAuthController.getProfile);
 app.post("/api/auth/updateprofile", firebaseAuthController.updateProfile);
+
+//creator APIs
+
+
+
+//user APIs
+
 app.post("/api/auth/addnote", firebaseAuthController.addNote);
 app.post("/api/profile/updateimage", upload.single("image") ,firebaseAuthController.updateProfileImage);
 
@@ -54,10 +70,7 @@ app.post("/api/channel/createPlaylist", channelController.createPlaylist);
 app.post("/api/channel/getPlaylists", channelController.getPlaylists);
 
 
-app.post("/api/store/getcategories", storeController.getAllCategories);
-app.post("/api/store/addcategory",  upload.single("image"), storeController.addCategory);
-app.post("/api/store/deletecategory", storeController.deleteCategory);
-app.post("/api/store/updatecategory", upload.single("image"), storeController.updateCategory);
+
 
 app.post("/api/store/createStore", storeController.createStore);
 app.post("/api/store/getstoreid", storeController.getStoreId);
