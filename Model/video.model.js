@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const ProductSchema = mongoose.Schema({
+const VideoSchema = mongoose.Schema({
     title: {type: String, required: true},
     description: {type: String},
     likes: {type: Number},
@@ -15,5 +15,5 @@ const ProductSchema = mongoose.Schema({
     channel_id: {type:  mongoose.Schema.Types.ObjectId, ref: 'Channel'}
 })
  
-module.exports = mongoose.model('Video', ProductSchema );
+module.exports = mongoose.model('Video', VideoSchema );
 

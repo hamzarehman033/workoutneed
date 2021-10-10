@@ -5,6 +5,7 @@ const UserDb = require("../Model/user.model");
 const ChannelDb = require("../Model/channel.model");
 const CategoryDb = require("../Model/category.model");
 const StoreDb = require("../Model/store.model");
+const NotificationService = require("../Service/notifications.service");
 const ProductDb = require("../Model/product.model");
 const OrderDb = require("../Model/order.model");
 const fs = require('fs');
@@ -27,7 +28,10 @@ exports.addOrder =( async (req, res)=>{
             date: new Date().toLocaleDateString()
         })
         order.save().then( 
-            order =>{
+            (order) =>{
+                StoreDb.findById(data.store_id).then(
+                    _store => { NotificationService.new(_store?.user_id, data.buyer_id, "New Order Created"); }
+                )
                 res.status(200).json({message: "order created", payload: order})
             }
         ).catch( err =>{
