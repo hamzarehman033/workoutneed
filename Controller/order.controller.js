@@ -20,6 +20,8 @@ exports.addOrder =( async (req, res)=>{
             store_id: data.store_id,
             buyer_id: data.buyer_id,
             price: data.price,
+            color: data.color,
+            size: data.size,
             status: 'uncompleted',
             payment_completed: false,
             date: new Date().toLocaleDateString()

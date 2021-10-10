@@ -144,7 +144,7 @@ exports.createStore =( async (req, res)=>{
     if(data.id && data.title){
         UserDb.findOne({uid:data.id}).then(
             _user =>{
-                if(!_user.store_id){
+                if(_user && !_user.store_id){
                     const store = new StoreDb({
                         user_id: _user.uid,
                         title: data.title,
@@ -157,8 +157,13 @@ exports.createStore =( async (req, res)=>{
                             res.status(200).json({message:"store create", payload: _store})
                         }
                     )
-                }else{
+                }
+                else if(_user && _user.store_id){
                     res.status(400).json({message:"store already exists for this user", error: null})
+
+                }
+                else{
+                    res.status(400).json({message:"no user found against the provided id", error: null})
                 }
             }
         )
@@ -232,6 +237,8 @@ exports.addProduct = ((req, res)=>{
                             category_id: data.category_id,
                             image_url: downloadURL,
                             price: data.price,
+                            colors: data.colors,
+                            sizes: data.sizes,
                             service_charges:data.service_charges,
                             price: data.price,
                             store_id: data.store_id
@@ -302,6 +309,82 @@ exports.deleteProduct =( async (req, res)=>{
     }
     else{ res.status(400).json({message:'invalid params', error: null}); }
         
+})
+
+
+
+exports.addBrand =( async (req, res)=>{
+    const data = req.body;
+    if(data.category_id && data.brand_name){
+        CategoryDb.findById(data.category_id).then(
+            category =>{
+                if(category && category.brands.length < 3){
+                    category.brands.push(data.brand_name);
+                    category.save().then(
+                        _category=>{
+                            res.status(200).json({message:"brand added", payload: _category})
+                        }
+                    )
+                }
+                else if(category && category.length >= 3){
+                    res.status(200).json({message:"brands max length in this category reached", payload: _category})
+                }
+                else{
+                    res.status(400).json({message:'no category found against the id', error: null})
+                }
+            }
+        ).catch( () => res.status(400).json({message:'no category found against the id', error: null}) )
+    }
+    else{ res.status(400).json({message:'invalid params', error: null}); }
+        
+})
+
+exports.deleteBrand =( async (req, res)=>{
+    const data = req.body;
+    if(data.category_id && data.brand_name){
+        CategoryDb.findByIdAndUpdate(data.category_id, {$pull:{brands: data.brand_name}}).then(
+            category =>{
+                if(category){
+                    res.status(200).json({message:"brand removed", payload: category});
+                }
+                else{
+                    res.status(400).json({message:'no category found against the id', error: null})
+                }
+            }
+        ).catch( () => res.status(400).json({message:'no category found against the id', error: null}) )
+    }
+    else{ res.status(400).json({message:'invalid params', error: null}); }
+        
+})
+
+
+exports.addtocart=( async (req, res)=>{
+    if(data.user_id && data.product_id){
+        UserDb.findByIdAndUpdate(data.user_id, {$push:{cart: data.product_id}}).then(
+            _user =>{
+                if(_user){
+                    res.status(200).json({message:"added to cart", payload: _user.cart});
+                }
+                else{
+                    res.status(400).json({message:'no user found against the id', error: null})
+                }
+            }
+        ).catch( error => res.status(400).json({message:'no user found against the id', error: null}))
+    }
+})
+exports.deleteFromCart=( async (req, res)=>{
+    if(data.user_id && data.product_id){
+        UserDb.findByIdAndUpdate(data.user_id, {$pull:{cart: data.product_id}}).then(
+            _user =>{
+                if(_user){
+                    res.status(200).json({message:"removed from cart", payload: _user.cart});
+                }
+                else{
+                    res.status(400).json({message:'no user found against the id', error: null})
+                }
+            }
+        ).catch( error => res.status(400).json({message:'no user found against the id', error: null}))
+    }
 })
 // exports.login = ((req, rsp)=>{
 //     if(true){           

@@ -7,6 +7,7 @@ const firebaseAuthController = require("./Auth/firebase-auth");
 const channelController = require("./Controller/channel.controller");
 const storeController = require("./Controller/store.controller");
 const orderController = require("./Controller/order.controller");
+const chatController = require("./Controller/chat.controller");
 const app = express();
 
 
@@ -41,6 +42,8 @@ app.post("/api/store/getcategories", storeController.getAllCategories);
 app.post("/api/store/addcategory",  upload.single("image"), storeController.addCategory);
 app.post("/api/store/deletecategory", storeController.deleteCategory);
 app.post("/api/store/updatecategory", upload.single("image"), storeController.updateCategory);
+app.post("/api/store/addbrand", storeController.addBrand);
+app.post("/api/store/deletebrand", storeController.deleteBrand);
 
 
 // General APIs
@@ -68,6 +71,11 @@ app.post("/api/channel/unsubscribe", channelController.unsubscribe);
 app.post("/api/channel/updatelogo", upload.single("image"), channelController.updateLogo);
 app.post("/api/channel/createPlaylist", channelController.createPlaylist);
 app.post("/api/channel/getPlaylists", channelController.getPlaylists);
+app.post("/api/channel/uploadvideo",upload.single("video"),  channelController.uploadVideo);
+app.post("/api/channel/getvideo", channelController.getVideo);
+app.post("/api/channel/likevideo", channelController.likeVideo);
+app.post("/api/channel/addcomment", channelController.addComment);
+app.post("/api/channel/linkproduct", channelController.linkProduct);
 
 
 
@@ -80,7 +88,8 @@ app.post("/api/store/getstoreproducts", storeController.getStoreProducts);
 app.post("/api/store/addproduct", upload.single("image"), storeController.addProduct);
 app.post("/api/store/getproduct", storeController.getProduct);
 app.post("/api/store/editproduct", storeController.updateProduct);
-app.post("/api/store/deleteproduct", storeController.deleteProduct);
+app.post("/api/store/addtocart", storeController.addtocart);
+app.post("/api/store/deletefromcart", storeController.deleteFromCart);
 
 app.post("/api/store/addorder", orderController.addOrder);
 app.post("/api/store/updateorder", orderController.updateOrder);
@@ -88,6 +97,13 @@ app.post("/api/store/getorder", orderController.getOrder);
 app.post("/api/store/getbuyerorder", orderController.getBuyerOrders);
 app.post("/api/store/getsellerorder", orderController.getSellerOrders);
 app.post("/api/store/orderpaid", orderController.markOrderPaid);
+
+//chat
+app.post("/api/chat/creatorchats", chatController.getCreatorChats);
+app.post("/api/chat/userchats", chatController.getUserChats);
+app.post("/api/chat/startchat", chatController.startChat);
+app.post("/api/chat/newmessage", chatController.newMessage);
+
 
 app.get('/*', function(req,res) {
   res.status(200).json({status: true, message:"Workoutneed server running"});

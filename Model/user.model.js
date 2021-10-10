@@ -11,6 +11,7 @@ const UserSchema = mongoose.Schema({
     phone: {type: String},
     address: {type: String},
     subscription: { type: String},
+    cart: [{type:  mongoose.Schema.Types.ObjectId, ref: 'Product'}],
     channel_id: {type:  mongoose.Schema.Types.ObjectId, ref: 'Channel'},
     store_id: {type:  mongoose.Schema.Types.ObjectId, ref: 'Store'},
     notes: [
