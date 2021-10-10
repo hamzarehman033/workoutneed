@@ -9,8 +9,7 @@ exports.new = (creator_id, user_id, message)=>{
 
 }
 
-
-exports.getbyUserid = ((req, res)=>{
+exports.getbyUserid =  (async (req, res)=>{
     const data = req.body;
     if(data.user_id){
         const notifications = await NotificationDb.find({user_id:data.user_id});

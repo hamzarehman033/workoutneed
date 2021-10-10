@@ -30,7 +30,7 @@ exports.addOrder =( async (req, res)=>{
         order.save().then( 
             (order) =>{
                 StoreDb.findById(data.store_id).then(
-                    _store => { NotificationService.new(_store?.user_id, data.buyer_id, "New Order Created"); }
+                    _store => { NotificationService.new(_store.user_id, data.buyer_id, "New Order Created"); }
                 )
                 res.status(200).json({message: "order created", payload: order})
             }
